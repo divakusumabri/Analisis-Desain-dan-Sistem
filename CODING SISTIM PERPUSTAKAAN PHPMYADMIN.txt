@@ -1,0 +1,93 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Sep 10, 2024 at 09:00 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+-- Create Database
+CREATE DATABASE IF NOT EXISTS `perpustakaan_iva_syafira`;
+USE `perpustakaan_iva_syafira`;
+
+-- --------------------------------------------------------
+
+-- Table structure for table `anggota`
+--
+
+CREATE TABLE `anggota` (
+  `Id_Anggota` int(11) NOT NULL AUTO_INCREMENT,
+  `Nama` varchar(255) NOT NULL,
+  `Alamat` text NOT NULL,
+  `Telepon` varchar(20) NOT NULL,
+  `Email` varchar(100) NOT NULL,
+  `Tanggal_Daftar` date NOT NULL,
+  PRIMARY KEY (`Id_Anggota`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+-- Table structure for table `buku`
+--
+
+CREATE TABLE `buku` (
+  `Id_Buku` int(11) NOT NULL AUTO_INCREMENT,
+  `Judul` varchar(255) NOT NULL,
+  `Penulis` varchar(255) NOT NULL,
+  `Penerbit` varchar(255) NOT NULL,
+  `Tahun_Terbit` year NOT NULL,
+  `Genre` varchar(100) NOT NULL,
+  `Jumlah_Copy` int(11) NOT NULL,
+  `Lokasi` varchar(100) NOT NULL,
+  PRIMARY KEY (`Id_Buku`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+-- Table structure for table `peminjaman`
+--
+
+CREATE TABLE `peminjaman` (
+  `Id_Peminjaman` int(11) NOT NULL AUTO_INCREMENT,
+  `Id_Anggota` int(11) NOT NULL,
+  `Id_Buku` int(11) NOT NULL,
+  `Tanggal_Pinjam` date NOT NULL,
+  `Tanggal_Kembali` date DEFAULT NULL,
+  `Status` varchar(20) NOT NULL,
+  PRIMARY KEY (`Id_Peminjaman`),
+  KEY `idx_Id_Anggota` (`Id_Anggota`),
+  KEY `idx_Id_Buku` (`Id_Buku`),
+  CONSTRAINT `FK_Anggota` FOREIGN KEY (`Id_Anggota`) REFERENCES `anggota` (`Id_Anggota`) ON DELETE CASCADE,
+  CONSTRAINT `FK_Buku` FOREIGN KEY (`Id_Buku`) REFERENCES `buku` (`Id_Buku`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+-- Table structure for table `pengembalian`
+--
+
+CREATE TABLE `pengembalian` (
+  `Id_Pengembalian` int(11) NOT NULL AUTO_INCREMENT,
+  `Id_Peminjaman` int(11) NOT NULL,
+  `Tanggal_Kembali` date NOT NULL,
+  `Denda` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`Id_Pengembalian`),
+  KEY `idx_Id_Peminjaman` (`Id_Peminjaman`),
+  CONSTRAINT `FK_Peminjaman` FOREIGN KEY (`Id_Peminjaman`) REFERENCES `peminjaman` (`Id_Peminjaman`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
